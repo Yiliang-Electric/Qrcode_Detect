@@ -1,0 +1,7 @@
+opencv-contrib-python==4.8.0.76
+opencv-python==4.8.0.76
+pyrealsense2==2.54.1.5217
+pytz==2023.3
+PyYAML==6.0.1
+pyzbar==0.1.9
+qrcode==7.4.2
