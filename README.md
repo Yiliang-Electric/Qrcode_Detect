@@ -2,6 +2,6 @@
 
 pip install -r requirements.txt
 
-#Run
+# Run
 
 python test_l1515_qrcode.py
