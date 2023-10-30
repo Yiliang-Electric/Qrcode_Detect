@@ -108,23 +108,25 @@ def decode(image):
 
     return image
 
-qrcodedic={}
 
 def decode2(image):
-    # decodes all barcodes from an image
-    
-    # barcode.data.decode("utf-8")  utf-8
+        decoded_objects = pyzbar.decode(image)
+        qrcodedic = {}
 
-    decoded_objects = pyzbar.decode(image)
-    for idx,obj in enumerate(decoded_objects):
-        # draw the barcode
+        for idx,obj in enumerate(decoded_objects):
+            qrcodedic[idx]= obj.rect.left
+        sorted_dict_by_value_desc = dict(sorted(qrcodedic.items(), key=lambda item: item[1], reverse=True))
         
-        image = draw_barcode(obj, image)
-        
-        qrcodedic[obj.data.decode("utf-8")]= obj.rect.left
-        #print()
+        BoxIDList = []
+        for k,v in sorted_dict_by_value_desc.items():
+            obj = decoded_objects[k]
+            image = draw_barcode(obj, image)
+                  
+            BoxIDList.append(obj.data.decode("utf-8"))
 
-    return image
+        # return image, self.qrcodedic, angle_list
+        return image, BoxIDList
+
 
 def draw_barcode(decoded, image):
     # n_points = len(decoded.polygon)
@@ -163,22 +165,9 @@ for idx_, i in enumerate(camera.getData()):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     
     #image = decode(image)
-    image = decode2(image)    
+    image,boxlist = decode2(image)    
 
-    print(qrcodedic)
-
-    # 按照值对字典进行降序排序
-    print("按照值对字典进行降序排序")
-    sorted_dict_by_value_desc = dict(sorted(qrcodedic.items(), key=lambda item: item[1], reverse=True))
-    print("按值降序排序:", sorted_dict_by_value_desc)
-    
-    # 按照值对字典进行升序排序并转换为OrderedDict
-    print("按照值对字典进行升序排序并转换为OrderedDict")
-    sorted_qrcodedic_by_value = OrderedDict(sorted(qrcodedic.items(), key=lambda item: item[1]))
-    print("按值升序排序:", sorted_qrcodedic_by_value)
-
-    num_items = len(qrcodedic)
-    #print(num_items)
+    cv2.putText(image, f"ID: {boxlist}",(50,50), cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(0,0,255,1))
 
     cv2.imshow('Image', image)
     
